@@ -3,25 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
     <link rel="stylesheet" href="style.css">
-    <title>Money Tracker Web App</title>
+    <title>Expense Tracker</title>
 </head>
 <body>
-    <h1> Money Tracker Web App</h1>
+    <h1>Student Expense Tracker</h1>
     <div class="input-section">
-        <label for="category-select">category</label>
-        <select id="category-select">
-            <option value="college fee">Collage Fee</option>
-            <option value="Rent">Rent</option>
-            <option value="Transport">Transport</option>
-            <option value="Food">Food</option>
-            <option value="Shopping">Shopping</option>
-            <option value="Cool drinks">Cool drinks</option>
-        </select>
-        <label for="amount-input">Amount</label>
-        <input type="number" id="amount-input">
-        <label for="date-input">Date</label>
-        <input type="date" id="data-input">
+        <div>
+            <label for="category-select" style=" font-size: 25px;font-family:Times New Roman">Category :</label>
+            <select id="category-select" style="font-size: 15px;padding:4px;font-family: Lora sans-serif;">
+                <option value="College Fee">College Fee</option>
+                <option value="Hostel">Hostel</option>
+                <option value="Food">Food</option>
+                <option value="NoteBook">NoteBook</option>
+                <option value="TextBooks">TextBooks</option>
+                <option value="Travelling">Travelling</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+        <div>
+            <label for="amount-input"style=" font-size: 25px;font-family:Times New Roman">Amount :</label>
+            <input type="number" id="amount-input">
+        </div>
+        <div>
+            <label for="date-input">Date:</label>
+            <input type="date" id="date-input">
+        </div>
         <button id="add-btn">Add</button>
     </div>
     <div class="expenses-list">
@@ -35,18 +44,105 @@
                     <th>Delete</th>
                 </tr>
             </thead>
-            <tbody id="expenses-table-body">
+            <tbody id="expense-table-body">
 
             </tbody>
             <tfoot>
-                <td>Total:</td>
-                <td id="total-Amount"></td>
-                <td></td>
-                <td></td>
+                <tr>
+                    <td>Total:</td>
+                    <td id="total-amount"></td>
+                    <td></td>
+                    <td></td>
+                </tr>
             </tfoot>
         </table>
     </div>
-    <script src="script.js"></script>
-    
+
+    <script>
+        let expenses = [];
+        let totalAmount = 0;
+
+        const categorySelect = document.getElementById('category-select');
+        const amountInput = document.getElementById('amount-input');
+        const dateInput = document.getElementById('date-input');
+        const addBtn = document.getElementById('add-btn');
+        const expensesTableBody = document.getElementById('expense-table-body');
+        const totalAmountCell = document.getElementById('total-amount');
+
+        addBtn.addEventListener('click', function() {
+            const category = categorySelect.value;
+            const amount = Number(amountInput.value);
+            const date = dateInput.value;
+
+            if(category === '') {
+                alert('Please Select Category');
+                return;
+            }
+            if(isNaN(amount) || amount <= 0){
+                alert('Please enter a valid Amount');
+                return;
+            }
+            if(date === '' ){
+                alert('Please Select Date');
+                return;
+            }
+            expenses.push({category, amount, date});
+
+            totalAmount += amount;
+            totalAmountCell.textContent = totalAmount;
+            const newRow = expensesTableBody.insertRow();
+
+            const categoryCell = newRow.insertCell();
+            const amountCell = newRow.insertCell();
+            const dateCell = newRow.insertCell();
+            const deleteCell = newRow.insertCell();
+            const deleteBtn = document.createElement('button');
+
+            deleteBtn.textContent = 'Delete';
+            deleteBtn.classList.add('delete-btn');
+            deleteBtn.addEventListener('click', function() {
+                expenses.splice(expenses.indexOf(expense), 1);
+
+                totalAmount -= expense.amount;
+                totalAmountCell.textContent = totalAmount;
+
+                expensesTableBody.removeChild(newRow);
+
+            });
+
+            const expense = expenses[expenses.length - 1];
+            categoryCell.textContent = expense.category;
+            amountCell.textContent = expense.amount;
+            dateCell.textContent = expense.date;
+            deleteCell.appendChild(deleteBtn);
+        });
+
+        for(const expense of expenses) {
+            totalAmount += expense.amount;
+            totalAmountCell.textContent = totalAmount;
+
+            const newRow = expensesTableBody.insertRow();
+            const categoryCell = newRow.insertCell();
+            const amountCell = newRow.insertCell();
+            const dateCell = newRow.insertCell();
+            const deleteCell = newRow.insertCell();
+            const deleteBtn = document.createElement('button');
+
+            deleteBtn.textContent = 'Delete';
+            deleteBtn.classList.add('delete-btn');
+            deleteBtn.addEventListener('click', function() {
+                expenses.splice(expenses.indexOf(expenses), 1);
+
+                totalAmount -= expenses.amount;
+                totalAmountCell.textContent = totalAmount;
+                expensesTableBody.removeChild(newRow);
+
+            });
+            categoryCell.textContent = expense.category;
+            amountCell.textContent = expense.amount;
+            dateCell.textContent = expense.date;
+            deleteCell.appendChild(deleteBtn);
+        }
+    </script>
 </body>
 </html>
